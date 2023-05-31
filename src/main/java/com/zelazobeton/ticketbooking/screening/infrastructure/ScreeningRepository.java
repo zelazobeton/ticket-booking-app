@@ -15,7 +15,7 @@ import com.zelazobeton.ticketbooking.screening.model.Screening;
 @Repository
 public interface ScreeningRepository extends JpaRepository<Screening, Long> {
 
-    @Query("select new com.zelazobeton.ticketbooking.screening.application.ScreeningDto(s.movie.title, s.time) " +
+    @Query("select new com.zelazobeton.ticketbooking.screening.model.vo.ScreeningDto(s.movie.title, s.time) " +
                    "from Screening s where s.time < :upperLimit and s.time > :lowerLimit")
     List<ScreeningDto> getScreeningsInGivenTimeInterval(@Param("lowerLimit") LocalDateTime lowerLimit,
             @Param("upperLimit") LocalDateTime upperLimit, Sort sort);
