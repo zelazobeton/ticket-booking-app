@@ -1,39 +1,38 @@
 package com.zelazobeton.ticketbooking.reservation.application.impl;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import com.zelazobeton.ticketbooking.reservation.infrastructure.CustomReservationRepository;
+import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zelazobeton.ticketbooking.reservation.application.ReservationService;
 import com.zelazobeton.ticketbooking.reservation.application.SeatService;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.ReservationRepository;
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.reservation.model.vo.Bill;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservationData;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservedSeatDto;
 import com.zelazobeton.ticketbooking.screening.application.ScreeningService;
-import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
 
 @Service
 class ReservationServiceImpl implements ReservationService {
 
-    private ReservationRepository reservationRepository;
+    private CustomReservationRepository customReservationRepository;
     private ScreeningService screeningService;
     private SeatService seatService;
+    private SeatRepository seatRepository;
 
-    public ReservationServiceImpl(ReservationRepository reservationRepository,
-            ScreeningService screeningService, SeatService seatService) {
-        this.reservationRepository = reservationRepository;
+    public ReservationServiceImpl(ScreeningService screeningService, SeatService seatService, SeatRepository seatRepository, CustomReservationRepository customReservationRepository) {
+        this.customReservationRepository = customReservationRepository;
         this.screeningService = screeningService;
         this.seatService = seatService;
+        this.seatRepository = seatRepository;
     }
 
     @Override
@@ -45,10 +44,11 @@ class ReservationServiceImpl implements ReservationService {
         this.validateReservationRequestTime(screening.getTime());
 
         Set<Seat> seats = this.seatService.findReservedSeats(reservationData.getSeats(), screening);
-        seats.forEach(seat -> seat.setReserved(true));
-        screening.getSeats().addAll(seats);
-        Reservation newReservation = new Reservation(reservationData.getClient(), screening, seats);
-        newReservation = this.reservationRepository.save(newReservation);
+        seats.forEach(Seat::reserve);
+        this.seatRepository.saveAll(seats);
+        Reservation newReservation = new Reservation(reservationData.getClient(), screening.getId());
+        newReservation = this.customReservationRepository.save(newReservation);
+        this.customReservationRepository.saveReservedSeats(seats, newReservation.getId());
         BigDecimal amountToBePaid = this.calculateAmountToBePaid(reservationData.getSeats());
         return new Bill(newReservation.getExpiryDate(), amountToBePaid);
     }

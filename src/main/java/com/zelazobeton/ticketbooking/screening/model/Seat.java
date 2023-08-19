@@ -1,33 +1,31 @@
 package com.zelazobeton.ticketbooking.screening.model;
 
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-
 import com.zelazobeton.ticketbooking.shared.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Seat extends BaseEntity implements Comparable<Seat> {
     private int rowNumber;
     private int number;
     private boolean reserved;
     private int weight;
-    @ManyToOne
-    private Screening screening;
+    private Long screeningId;
 
-    public Seat(int rowNumber, int number, boolean reserved, int weight, Screening screening) {
+    public Seat(int rowNumber, int number, boolean reserved, int weight, Long screeningId) {
         this.rowNumber = rowNumber;
         this.number = number;
         this.reserved = reserved;
         this.weight = weight;
-        this.screening = screening;
+        this.screeningId = screeningId;
+    }
+
+    public void reserve() {
+        this.reserved = true;
     }
 
     @Override

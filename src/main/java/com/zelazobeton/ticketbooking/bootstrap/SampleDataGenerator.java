@@ -4,12 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.screening.application.SeatsFactory;
+import com.zelazobeton.ticketbooking.screening.model.Screening;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.zelazobeton.ticketbooking.recommendation.SeatsRecommendator;
-import com.zelazobeton.ticketbooking.screening.application.ScreeningFactory;
 import com.zelazobeton.ticketbooking.screening.infrastructure.MovieRepository;
 import com.zelazobeton.ticketbooking.screening.infrastructure.RoomRepository;
 import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
@@ -25,18 +28,23 @@ public class SampleDataGenerator implements CommandLineRunner {
     private RoomRepository roomRepository;
     private MovieRepository movieRepository;
     private SeatsRecommendator seatsRecommendator;
+    private SeatRepository seatRepository;
 
     private String SEATS_IN_ROOM_CANNES = "[9, 12, 12, 12, 12, 12, 15, 15, 15]";
     private String SEATS_IN_ROOM_GDYNIA = "[9, 9, 9, 9, 9, 9, 9, 9, 9]";
     private String SEATS_IN_ROOM_SUNDANCE = "[10, 10, 10, 10, 13, 13, 13, 13, 13]";
-    private LocalDate SAMPLE_DATE = LocalDate.of(2023, 7, 1);
+    private LocalDate SAMPLE_DATE = LocalDate.of(2024, 7, 1);
 
-    public SampleDataGenerator(ScreeningRepository screeningRepository, RoomRepository roomRepository,
-            MovieRepository movieRepository, SeatsRecommendator seatsRecommendator) {
+    public SampleDataGenerator(ScreeningRepository screeningRepository,
+                               RoomRepository roomRepository,
+                               MovieRepository movieRepository,
+                               SeatsRecommendator seatsRecommendator,
+                               SeatRepository seatRepository) {
         this.screeningRepository = screeningRepository;
         this.roomRepository = roomRepository;
         this.movieRepository = movieRepository;
         this.seatsRecommendator = seatsRecommendator;
+        this.seatRepository = seatRepository;
     }
 
     @Override
@@ -52,23 +60,30 @@ public class SampleDataGenerator implements CommandLineRunner {
         Movie movie_5 = this.movieRepository.save(new Movie("Godmother"));
         Movie movie_6 = this.movieRepository.save(new Movie("Eyes wide open"));
 
-        Room cannes = this.roomRepository.save(new Room("Cannes", SEATS_IN_ROOM_CANNES));
-        Room gdynia = this.roomRepository.save(new Room("Gdynia", SEATS_IN_ROOM_GDYNIA));
-        Room sundance = this.roomRepository.save(new Room("Sundance", SEATS_IN_ROOM_SUNDANCE));
+        Room cannes = this.roomRepository.save(new Room("Cannes", this.SEATS_IN_ROOM_CANNES));
+        Room gdynia = this.roomRepository.save(new Room("Gdynia", this.SEATS_IN_ROOM_GDYNIA));
+        Room sundance = this.roomRepository.save(new Room("Sundance", this.SEATS_IN_ROOM_SUNDANCE));
 
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_1, cannes, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(21, 40))));
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_2, cannes, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(18, 20))));
+        Screening screening_1 = this.screeningRepository.save(new Screening(movie_1.getId(), cannes.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(21, 40))));
+        Screening screening_2 = this.screeningRepository.save(new Screening(movie_2.getId(), cannes.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(18, 20))));
+        Screening screening_3 = this.screeningRepository.save(new Screening(movie_3.getId(), gdynia.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(20, 00))));
+        Screening screening_4 = this.screeningRepository.save(new Screening(movie_4.getId(), gdynia.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(16, 40))));
+        Screening screening_5 = this.screeningRepository.save(new Screening(movie_5.getId(), sundance.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(17, 20))));
+        Screening screening_6 = this.screeningRepository.save(new Screening(movie_6.getId(), sundance.getId(),
+                LocalDateTime.of(this.SAMPLE_DATE, LocalTime.of(20, 40))));
 
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_3, gdynia, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(20, 00))));
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_4, gdynia, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(16, 40))));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(cannes.getSeatsSchema(), this.seatsRecommendator, screening_1));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(cannes.getSeatsSchema(), this.seatsRecommendator, screening_2));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(gdynia.getSeatsSchema(), this.seatsRecommendator, screening_3));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(gdynia.getSeatsSchema(), this.seatsRecommendator, screening_4));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(sundance.getSeatsSchema(), this.seatsRecommendator, screening_5));
+        this.seatRepository.saveAll(SeatsFactory.createSeatsForScreening(sundance.getSeatsSchema(), this.seatsRecommendator, screening_6));
 
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_5, sundance, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(17, 20))));
-        this.screeningRepository.save(ScreeningFactory.createScreening(movie_6, sundance, seatsRecommendator,
-                LocalDateTime.of(SAMPLE_DATE, LocalTime.of(20, 40))));
+
     }
 }

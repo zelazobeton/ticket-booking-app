@@ -1,13 +1,11 @@
 package com.zelazobeton.ticketbooking.reservation.model.vo;
 
-import javax.persistence.Embeddable;
 import javax.validation.constraints.Pattern;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Embeddable
 @NoArgsConstructor
 @Getter
 @Setter

@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.stereotype.Service;
 
 import com.zelazobeton.ticketbooking.reservation.application.SeatService;
@@ -27,16 +25,16 @@ class SeatServiceImpl implements SeatService {
     public Set<Seat> findReservedSeats(List<ReservedSeatDto> reservedSeats, Screening screening) {
         Set<Seat> seatsToBeReserved = new HashSet<>();
         for (ReservedSeatDto reservedSeat : reservedSeats) {
-            List<Seat> seats = this.seatRepository.getSeatByScreeningRowAndNumber(screening, reservedSeat.getRow(),
+            List<Seat> seats = this.seatRepository.getSeatByScreeningRowAndNumber(screening.getId(), reservedSeat.getRow(),
                     reservedSeat.getNumber());
             if (seats.size() != 1) {
-                throw new EntityNotFoundException(
+                throw new RuntimeException(
                         String.format("Seat with given number: %d in selected row: %d does not exist.",
                                 reservedSeat.getNumber(), reservedSeat.getRow()));
             }
             Seat seat = seats.get(0);
             if (seat.isReserved()) {
-                throw new EntityNotFoundException(String.format("Selected seat number: %d in row: %d is already reserved.",
+                throw new RuntimeException(String.format("Selected seat number: %d in row: %d is already reserved.",
                         reservedSeat.getNumber(), reservedSeat.getRow()));
             }
             seatsToBeReserved.add(seat);

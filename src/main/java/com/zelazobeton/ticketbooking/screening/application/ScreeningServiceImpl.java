@@ -2,13 +2,10 @@ package com.zelazobeton.ticketbooking.screening.application;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
-import javax.persistence.EntityNotFoundException;
 
+import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +21,22 @@ import com.zelazobeton.ticketbooking.screening.model.vo.ScreeningDto;
 
 @Service
 class ScreeningServiceImpl implements ScreeningService {
-    private ScreeningRepository screeningRepository;
-    private SeatsRecommendator seatsRecommendator;
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private final ScreeningRepository screeningRepository;
+    private final SeatsRecommendator seatsRecommendator;
+    private final SeatRepository seatRepository;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private static int FIRST_OBJECT_RETURNED = 0;
+    private static final int FIRST_OBJECT_RETURNED = 0;
 
-    public ScreeningServiceImpl(ScreeningRepository screeningRepository, SeatsRecommendator seatsRecommendator) {
+    public ScreeningServiceImpl(ScreeningRepository screeningRepository, SeatsRecommendator seatsRecommendator, SeatRepository seatRepository) {
         this.screeningRepository = screeningRepository;
         this.seatsRecommendator = seatsRecommendator;
+        this.seatRepository = seatRepository;
     }
 
     @Override
     public List<ScreeningDto> getScreenings(String date, String time) {
-        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, this.formatter);
         LocalDateTime upperBoundary = dateTime.plusHours(4);
         LocalDateTime lowerBoundary = dateTime.minusHours(1);
         return this.screeningRepository.getScreeningsInGivenTimeInterval(lowerBoundary, upperBoundary,
@@ -45,14 +44,14 @@ class ScreeningServiceImpl implements ScreeningService {
     }
 
     @Override
-    public AvailableSeatsDto getAvailableSeats(String title, String date, String time, int seats) {
-        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, formatter);
-        Screening screening = this.findScreeningByTitleDateAndTime(title, dateTime);
-        Map<Integer, List<Seat>> rowsToSeats = screening.getSeats()
+    public AvailableSeatsDto getAvailableSeats(String title, String date, String time, int numberOfSeats) {
+        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, this.formatter);
+        Set<Seat> seats = this.seatRepository.getSeatsByTitleAndScreeningTime(title, dateTime);
+        Map<Integer, List<Seat>> rowsToSeats = seats
                 .stream()
                 .collect(Collectors.groupingBy(Seat::getRowNumber));
         rowsToSeats.forEach((key, value) -> Collections.sort(value));
-        HashSet<Seat> recommendedSeats = this.seatsRecommendator.getRecommendedSeats(rowsToSeats, seats);
+        HashSet<Seat> recommendedSeats = this.seatsRecommendator.getRecommendedSeats(rowsToSeats, numberOfSeats);
         return this.createAvailableSeatsData(rowsToSeats, recommendedSeats);
     }
 
@@ -60,13 +59,13 @@ class ScreeningServiceImpl implements ScreeningService {
     public Screening findScreeningByTitleDateAndTime(String title, LocalDateTime dateTime) {
         List<Screening> selectedScreening = this.screeningRepository.getScreeningByTitleAndTime(title, dateTime);
         if (selectedScreening.size() == 0) {
-            throw new EntityNotFoundException("There is no screening of selected movie on given date and time");
+            throw new RuntimeException("There is no screening of selected movie on given date and time");
         }
         return selectedScreening.get(FIRST_OBJECT_RETURNED);
     }
 
     private AvailableSeatsDto createAvailableSeatsData(Map<Integer, List<Seat>> rowsToSeats,
-            HashSet<Seat> recommendedSeats) {
+                                                       HashSet<Seat> recommendedSeats) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode roomWithSeats = mapper.createObjectNode();
         roomWithSeats.put("Screen", "Screen is located on this side of the room.");
