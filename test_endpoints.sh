@@ -21,7 +21,7 @@ function callUrlWithGetAndPresentResponse() {
 }
 
 function callReservationUrlAndPresentResponse() {
-	reservation_request_body="{\"client\":{\"name\":\"Jan\",\"surname\":\"Kowalski\"},\"screening\":{\"title\":\"Eyes wide open\",\"time\":\"2023-07-01T20:40\"},\"seats\":[{\"row\":$1,\"number\":$2,\"type\":\"ADULT\"},{\"row\":$3,\"number\":$4,\"type\":\"CHILD\"},{\"row\":$5,\"number\":$6,\"type\":\"STUDENT\"},{\"row\":$7,\"number\":$8,\"type\":\"STUDENT\"}]}"
+	reservation_request_body="{\"client\":{\"name\":\"Jan\",\"surname\":\"Kowalski\"},\"screening\":{\"title\":\"Eyes wide open\",\"time\":\"2024-07-01T20:40\"},\"seats\":[{\"row\":$1,\"number\":$2,\"type\":\"ADULT\"},{\"row\":$3,\"number\":$4,\"type\":\"CHILD\"},{\"row\":$5,\"number\":$6,\"type\":\"STUDENT\"},{\"row\":$7,\"number\":$8,\"type\":\"STUDENT\"}]}"
 
 	response=$(curl -s -X POST -H "Content-Type: application/json" -d "$reservation_request_body" "$host$endpoint_reservation")
 	prettified_response=$(echo "$response" | python -m json.tool)
@@ -34,10 +34,10 @@ function callReservationUrlAndPresentResponse() {
 }
 
 
-screening_parameters="date=2023-07-01&time=20:00"
+screening_parameters="date=2024-07-01&time=20:00"
 callUrlWithGetAndPresentResponse $endpoint_screening $screening_parameters
 
-seats_parameters="title=Eyes+wide+open&date=2023-07-01&time=20:40&seats="
+seats_parameters="title=Eyes+wide+open&date=2024-07-01&time=20:40&seats="
 seats=4
 callUrlWithGetAndPresentResponse "$endpoint_seats" "$seats_parameters$seats"
 

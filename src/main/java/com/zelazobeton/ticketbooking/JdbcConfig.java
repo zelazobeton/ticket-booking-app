@@ -3,11 +3,8 @@ package com.zelazobeton.ticketbooking;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
@@ -20,16 +17,6 @@ public class JdbcConfig {
     JdbcTemplate jdbcTemplate() {
         return new JdbcTemplate(this.getDataSource());
     }
-
-//    @Bean
-//    @Profile("in-memory")
-//    DataSource getDataSource() {
-//        return new EmbeddedDatabaseBuilder()
-//                .generateUniqueName(true)
-//                .setType(EmbeddedDatabaseType.H2)
-//                .addScript("create_database.sql")
-//                .build();
-//    }
 
     @Bean
     public DataSource getDataSource() {

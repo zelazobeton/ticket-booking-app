@@ -11,7 +11,9 @@ import com.zelazobeton.ticketbooking.recommendation.SeatsRecommendator;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
 
-public class SeatsFactory {
+public final class SeatsFactory {
+
+    private SeatsFactory() {}
 
     public static Set<Seat> createSeatsForScreening(String seatsSchema,
                                                     SeatsRecommendator seatsRecommendator, Screening screening) throws JsonProcessingException {

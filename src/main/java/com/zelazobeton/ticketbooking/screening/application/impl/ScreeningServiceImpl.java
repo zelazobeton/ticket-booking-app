@@ -1,4 +1,4 @@
-package com.zelazobeton.ticketbooking.screening.application;
+package com.zelazobeton.ticketbooking.screening.application.impl;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.screening.application.ScreeningService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
