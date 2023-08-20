@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Repository
-class CustomReservationRepositoryImpl implements CustomReservationRepository {
+public class CustomReservationRepositoryImpl implements CustomReservationRepository {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
 

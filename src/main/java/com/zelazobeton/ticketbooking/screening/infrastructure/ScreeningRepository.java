@@ -25,6 +25,7 @@ public interface ScreeningRepository extends CrudRepository<Screening, Long> {
     @Query("select s.* from screening s " +
             "join movie m on s.movie_id=m.id " +
             "where s.time = :time " +
-            "and m.title = :title")
-    List<Screening> getScreeningByTitleAndTime(@Param("title") String title, @Param("time") LocalDateTime time);
+            "and m.title = :title " +
+            "limit 1")
+    Screening getScreeningByTitleAndTime(@Param("title") String title, @Param("time") LocalDateTime time);
 }

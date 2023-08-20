@@ -27,8 +27,6 @@ class ScreeningServiceImpl implements ScreeningService {
     private final SeatRepository seatRepository;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    private static final int FIRST_OBJECT_RETURNED = 0;
-
     public ScreeningServiceImpl(ScreeningRepository screeningRepository, SeatsRecommendator seatsRecommendator, SeatRepository seatRepository) {
         this.screeningRepository = screeningRepository;
         this.seatsRecommendator = seatsRecommendator;
@@ -54,15 +52,6 @@ class ScreeningServiceImpl implements ScreeningService {
         rowsToSeats.forEach((key, value) -> Collections.sort(value));
         HashSet<Seat> recommendedSeats = this.seatsRecommendator.getRecommendedSeats(rowsToSeats, numberOfSeats);
         return this.createAvailableSeatsData(rowsToSeats, recommendedSeats);
-    }
-
-    @Override
-    public Screening findScreeningByTitleDateAndTime(String title, LocalDateTime dateTime) {
-        List<Screening> selectedScreening = this.screeningRepository.getScreeningByTitleAndTime(title, dateTime);
-        if (selectedScreening.size() == 0) {
-            throw new RuntimeException("There is no screening of selected movie on given date and time");
-        }
-        return selectedScreening.get(FIRST_OBJECT_RETURNED);
     }
 
     private AvailableSeatsDto createAvailableSeatsData(Map<Integer, List<Seat>> rowsToSeats,

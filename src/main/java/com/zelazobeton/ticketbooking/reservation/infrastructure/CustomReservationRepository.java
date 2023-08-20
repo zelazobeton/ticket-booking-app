@@ -2,7 +2,6 @@ package com.zelazobeton.ticketbooking.reservation.infrastructure;
 
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
-import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
