@@ -1,4 +1,4 @@
-package com.zelazobeton.ticketbooking.reservation.application.impl;
+package com.zelazobeton.ticketbooking.reservation.application.service.impl;
 
 import com.zelazobeton.ticketbooking.ClockConfig;
 import com.zelazobeton.ticketbooking.JdbcConfig;

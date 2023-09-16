@@ -1,4 +1,4 @@
-package com.zelazobeton.ticketbooking.reservation.application.impl;
+package com.zelazobeton.ticketbooking.reservation.application.service.impl;
 
 import java.math.BigDecimal;
 import java.time.Clock;
@@ -7,19 +7,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.zelazobeton.ticketbooking.reservation.infrastructure.CustomReservationRepository;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.CustomReservationRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.SeatRepository;
 import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zelazobeton.ticketbooking.reservation.application.ReservationService;
+import com.zelazobeton.ticketbooking.reservation.application.service.ReservationService;
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.reservation.model.vo.Bill;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservationData;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservedSeatDto;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 class ReservationServiceImpl implements ReservationService {
@@ -29,6 +33,9 @@ class ReservationServiceImpl implements ReservationService {
     private final SeatRepository seatRepository;
     private final Clock clock;
 
+    @Autowired
+    PlatformTransactionManager transactionManager;
+
     public ReservationServiceImpl(CustomReservationRepository customReservationRepository, ScreeningRepository screeningRepository, SeatRepository seatRepository, Clock clock) {
         this.customReservationRepository = customReservationRepository;
         this.screeningRepository = screeningRepository;
@@ -37,21 +44,25 @@ class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    @Transactional
     public Bill createReservation(ReservationData reservationData) {
-        this.validateRequestedSeats(reservationData.getSeats());
-        Screening screening = this.screeningRepository.getScreeningByTitleAndTime(reservationData.getScreening().getTitle(),
-                reservationData.getScreening().getTime());
-        this.validateReservationRequestTime(screening.getTime());
+        TransactionTemplate tt = new TransactionTemplate(this.transactionManager);
+        Bill bill = tt.execute(status -> {
+            this.validateRequestedSeats(reservationData.getSeats());
+            Screening screening = this.screeningRepository.getScreeningByTitleAndTime(reservationData.getScreening().getTitle(),
+                    reservationData.getScreening().getTime());
+            this.validateReservationRequestTime(screening.getTime());
 
-        Set<Seat> seats = this.findReservedSeats(reservationData.getSeats(), screening);
-        seats.forEach(Seat::reserve);
-        this.seatRepository.saveAll(seats);
-        Reservation newReservation = new Reservation(reservationData.getClient(), screening.getId());
-        newReservation = this.customReservationRepository.save(newReservation);
-        this.customReservationRepository.saveReservedSeats(seats, newReservation.getId());
-        BigDecimal amountToBePaid = this.calculateAmountToBePaid(reservationData.getSeats());
-        return new Bill(newReservation.getExpiryDate(), amountToBePaid);
+            Set<Seat> seats = this.findReservedSeats(reservationData.getSeats(), screening);
+            seats.forEach(Seat::reserve);
+            this.seatRepository.saveAll(seats);
+            Reservation newReservation = new Reservation(reservationData.getClient(), screening.getId());
+            newReservation = this.customReservationRepository.save(newReservation);
+            this.customReservationRepository.saveReservedSeats(seats, newReservation.getId());
+            newReservation.setPaid(true);
+            BigDecimal amountToBePaid = this.calculateAmountToBePaid(reservationData.getSeats());
+            return new Bill(newReservation.getExpiryDate(), amountToBePaid);
+        });
+        return bill;
     }
 
     private Set<Seat> findReservedSeats(List<ReservedSeatDto> reservedSeats, Screening screening) {

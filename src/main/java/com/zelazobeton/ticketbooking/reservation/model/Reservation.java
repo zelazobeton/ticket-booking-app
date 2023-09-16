@@ -9,9 +9,11 @@ import com.zelazobeton.ticketbooking.shared.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.relational.core.mapping.Column;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class Reservation extends BaseEntity {
 

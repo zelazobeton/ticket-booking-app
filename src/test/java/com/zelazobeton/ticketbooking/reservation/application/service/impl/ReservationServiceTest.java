@@ -1,8 +1,7 @@
-package com.zelazobeton.ticketbooking.reservation.application.impl;
+package com.zelazobeton.ticketbooking.reservation.application.service.impl;
 
-import com.zelazobeton.ticketbooking.reservation.application.ReservationService;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.CustomReservationRepository;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.CustomReservationRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.SeatRepository;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ClientDto;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservationData;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservedSeatDto;

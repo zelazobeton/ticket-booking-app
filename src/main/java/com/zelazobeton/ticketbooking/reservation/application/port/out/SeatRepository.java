@@ -1,4 +1,4 @@
-package com.zelazobeton.ticketbooking.reservation.infrastructure;
+package com.zelazobeton.ticketbooking.reservation.application.port.out;
 
 import java.time.LocalDateTime;
 import java.util.List;

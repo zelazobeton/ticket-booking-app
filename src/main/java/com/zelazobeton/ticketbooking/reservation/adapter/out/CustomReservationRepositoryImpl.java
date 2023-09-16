@@ -1,6 +1,6 @@
-package com.zelazobeton.ticketbooking.reservation.infrastructure.impl;
+package com.zelazobeton.ticketbooking.reservation.adapter.out;
 
-import com.zelazobeton.ticketbooking.reservation.infrastructure.CustomReservationRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.CustomReservationRepository;
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ClientDto;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,12 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
 
     @Override
     public Reservation findById(Long reservationId) {
-        return this.jdbcTemplate.queryForObject("SELECT R.* FROM RESERVATION R WHERE R.ID = ?", new Object[]{reservationId}, new ReservationRowMapper());
+        List<Reservation> reservations = this.jdbcTemplate.query("SELECT R.* FROM RESERVATION R WHERE R.ID = ?", new Object[]{reservationId}, new ReservationRowMapper());
+        if (reservations.isEmpty()) {
+            return null;
+        } else {
+            return reservations.get(0);
+        }
     }
 
     @Override
@@ -56,9 +62,13 @@ public class CustomReservationRepositoryImpl implements CustomReservationReposit
 
         @Override
         public Reservation mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return new Reservation(rs.getLong("ID"),
-                    new ClientDto(rs.getString("NAME"), rs.getString("SURNAME")),
-                    rs.getLong("SCREENING_ID"), rs.getBoolean("IS_PAID"), rs.getTimestamp("EXPIRY_DATE").toLocalDateTime());
+            return new Reservation(
+                    rs.getLong("ID"),
+                    new ClientDto(rs.getString("NAME"),
+                            rs.getString("SURNAME")),
+                    rs.getLong("SCREENING_ID"),
+                    rs.getBoolean("IS_PAID"),
+                    rs.getTimestamp("EXPIRY_DATE").toLocalDateTime());
         }
     }
 }

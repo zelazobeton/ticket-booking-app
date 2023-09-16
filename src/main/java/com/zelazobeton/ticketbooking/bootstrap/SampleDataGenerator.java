@@ -4,11 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.SeatRepository;
 import com.zelazobeton.ticketbooking.screening.application.SeatsFactory;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

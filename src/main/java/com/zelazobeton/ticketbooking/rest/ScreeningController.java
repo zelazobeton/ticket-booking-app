@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zelazobeton.ticketbooking.reservation.application.ReservationService;
+import com.zelazobeton.ticketbooking.reservation.application.service.ReservationService;
 import com.zelazobeton.ticketbooking.reservation.model.vo.Bill;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservationData;
 import com.zelazobeton.ticketbooking.screening.model.vo.AvailableSeatsDto;

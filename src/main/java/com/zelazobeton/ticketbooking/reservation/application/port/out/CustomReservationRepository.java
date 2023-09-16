@@ -1,4 +1,4 @@
-package com.zelazobeton.ticketbooking.reservation.infrastructure;
+package com.zelazobeton.ticketbooking.reservation.application.port.out;
 
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
