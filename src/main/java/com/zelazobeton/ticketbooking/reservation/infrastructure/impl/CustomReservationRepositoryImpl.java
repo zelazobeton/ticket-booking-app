@@ -4,7 +4,6 @@ import com.zelazobeton.ticketbooking.reservation.infrastructure.CustomReservatio
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ClientDto;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;

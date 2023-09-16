@@ -11,6 +11,7 @@ import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepositor
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.vo.ScreeningDto;
 import org.assertj.core.api.Assertions;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testng.annotations.AfterClass;
@@ -32,7 +33,8 @@ public class ReservationServiceTest {
     private static final Long TEST_MOVIE_ID = 11L;
     private static final Long TEST_ROOM_ID = 22L;
 
-    private ReservationService reservationService;
+    @InjectMocks
+    private ReservationServiceImpl reservationService;
 
     @Mock
     private CustomReservationRepository customReservationRepository;
@@ -44,14 +46,11 @@ public class ReservationServiceTest {
     @Mock
     private Clock clock;
 
-    private Clock fixedClock;
-
     AutoCloseable mocks;
 
     @BeforeClass
     public void setUp() throws Exception {
         this.mocks = MockitoAnnotations.openMocks(this);
-        this.reservationService = new ReservationServiceImpl(this.customReservationRepository, this.screeningRepository, this.seatRepository, this.clock);
     }
 
     @AfterClass
@@ -89,8 +88,8 @@ public class ReservationServiceTest {
     }
 
     private void mockLocalDateTime(LocalDateTime mockedCurrentTime) {
-        this.fixedClock = Clock.fixed(mockedCurrentTime.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
-        doReturn(this.fixedClock.instant()).when(this.clock).instant();
-        doReturn(this.fixedClock.getZone()).when(this.clock).getZone();
+        Clock fixedClock = Clock.fixed(mockedCurrentTime.atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
+        doReturn(fixedClock.instant()).when(this.clock).instant();
+        doReturn(fixedClock.getZone()).when(this.clock).getZone();
     }
 }

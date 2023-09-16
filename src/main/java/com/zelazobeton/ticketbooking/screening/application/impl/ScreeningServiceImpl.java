@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zelazobeton.ticketbooking.recommendation.SeatsRecommendator;
 import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
-import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
 import com.zelazobeton.ticketbooking.screening.model.vo.AvailableSeatsDto;
 import com.zelazobeton.ticketbooking.screening.model.vo.ScreeningDto;
