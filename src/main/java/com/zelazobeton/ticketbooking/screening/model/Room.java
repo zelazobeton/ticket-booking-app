@@ -14,7 +14,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Room extends BaseEntity {

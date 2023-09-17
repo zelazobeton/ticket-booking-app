@@ -1,24 +1,21 @@
 package com.zelazobeton.ticketbooking.reservation.application.impl;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zelazobeton.ticketbooking.reservation.application.ReservationService;
 import com.zelazobeton.ticketbooking.reservation.application.SeatService;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.ReservationRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.ReservationRepository;
 import com.zelazobeton.ticketbooking.reservation.model.Reservation;
 import com.zelazobeton.ticketbooking.reservation.model.vo.Bill;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservationData;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservedSeatDto;
 import com.zelazobeton.ticketbooking.screening.application.ScreeningService;
-import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
 

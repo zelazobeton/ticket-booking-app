@@ -8,11 +8,9 @@ import com.zelazobeton.ticketbooking.shared.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Seat extends BaseEntity implements Comparable<Seat> {
     private int rowNumber;
@@ -30,6 +28,10 @@ public class Seat extends BaseEntity implements Comparable<Seat> {
         this.screening = screening;
     }
 
+    public void setReserved(boolean reserved) {
+        this.reserved = reserved;
+    }
+
     @Override
     public int compareTo(Seat other) {
         int result = Integer.compare(this.rowNumber, other.getRowNumber());
@@ -44,15 +46,15 @@ public class Seat extends BaseEntity implements Comparable<Seat> {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || this.getClass() != o.getClass()) {
             return false;
         }
         Seat seat = (Seat) o;
-        return rowNumber == seat.rowNumber && number == seat.number;
+        return this.rowNumber == seat.rowNumber && this.number == seat.number;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rowNumber, number);
+        return Objects.hash(this.rowNumber, this.number);
     }
 }

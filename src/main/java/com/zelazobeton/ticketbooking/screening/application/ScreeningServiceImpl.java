@@ -9,14 +9,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.zelazobeton.ticketbooking.recommendation.SeatsRecommendator;
-import com.zelazobeton.ticketbooking.screening.infrastructure.ScreeningRepository;
+import com.zelazobeton.ticketbooking.screening.application.port.out.ScreeningRepository;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;
 import com.zelazobeton.ticketbooking.screening.model.vo.AvailableSeatsDto;
@@ -37,16 +36,15 @@ class ScreeningServiceImpl implements ScreeningService {
 
     @Override
     public List<ScreeningDto> getScreenings(String date, String time) {
-        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, this.formatter);
         LocalDateTime upperBoundary = dateTime.plusHours(4);
         LocalDateTime lowerBoundary = dateTime.minusHours(1);
-        return this.screeningRepository.getScreeningsInGivenTimeInterval(lowerBoundary, upperBoundary,
-                Sort.by("movie.title", "time"));
+        return this.screeningRepository.getScreeningsInGivenTimeInterval(lowerBoundary, upperBoundary);
     }
 
     @Override
     public AvailableSeatsDto getAvailableSeats(String title, String date, String time, int seats) {
-        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, formatter);
+        LocalDateTime dateTime = LocalDateTime.parse(date + " " + time, this.formatter);
         Screening screening = this.findScreeningByTitleDateAndTime(title, dateTime);
         Map<Integer, List<Seat>> rowsToSeats = screening.getSeats()
                 .stream()

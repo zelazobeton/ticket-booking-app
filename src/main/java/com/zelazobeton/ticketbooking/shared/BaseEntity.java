@@ -10,14 +10,11 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.SequenceGenerator;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @MappedSuperclass
 @Getter
-@Setter
 public class BaseEntity implements Serializable {
     @Id
-//    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "id_Sequence")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(name = "id_Sequence", sequenceName = "ID_SEQ")
     @Column(nullable = false, updatable = false)

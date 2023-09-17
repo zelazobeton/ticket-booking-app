@@ -19,11 +19,9 @@ import com.zelazobeton.ticketbooking.shared.BaseEntity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Reservation extends BaseEntity {
     @Embedded
@@ -46,5 +44,9 @@ public class Reservation extends BaseEntity {
         this.isPaid = false;
         this.expiryDate = LocalDateTime.ofInstant(Instant.now().plusSeconds(60L * 15L), ZoneId.of("Europe/Warsaw"))
                 .truncatedTo(ChronoUnit.MINUTES);
+    }
+
+    public void markAsPaid() {
+        this.isPaid = true;
     }
 }

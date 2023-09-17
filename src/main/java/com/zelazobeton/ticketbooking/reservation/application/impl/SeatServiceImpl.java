@@ -9,7 +9,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.zelazobeton.ticketbooking.reservation.application.SeatService;
-import com.zelazobeton.ticketbooking.reservation.infrastructure.SeatRepository;
+import com.zelazobeton.ticketbooking.reservation.application.port.out.SeatRepository;
 import com.zelazobeton.ticketbooking.reservation.model.vo.ReservedSeatDto;
 import com.zelazobeton.ticketbooking.screening.model.Screening;
 import com.zelazobeton.ticketbooking.screening.model.Seat;

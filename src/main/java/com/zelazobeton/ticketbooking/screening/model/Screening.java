@@ -17,7 +17,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Screening extends BaseEntity {
     @ManyToOne
@@ -32,5 +31,9 @@ public class Screening extends BaseEntity {
         this.movie = movie;
         this.room = room;
         this.time = time;
+    }
+
+    public void setSeats(Set<Seat> seats) {
+        this.seats = seats;
     }
 }
